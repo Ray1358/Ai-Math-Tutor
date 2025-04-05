@@ -1,5 +1,9 @@
 package com.baezcostiganreed.mathtutorapp;
 
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -16,7 +20,9 @@ import reactor.core.publisher.Flux;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 /**
  * Provides REST endpoints to interact with a chat client.
@@ -28,6 +34,9 @@ public class ChatController {
     private SystemPromptTemplate systemPromptTemplate;
     private final OllamaApi ollamaApi = new OllamaApi("http://localhost:11434");
     private final PgVectorStore vectorStore;
+    String conversationId = UUID.randomUUID().toString();
+    InMemoryChatMemory chatMemory = new InMemoryChatMemory();
+
 
     @Value("classpath:/prompts/prompt_template.txt")
     private Resource systemTemplateResource;
@@ -53,7 +62,7 @@ public class ChatController {
      */
     @GetMapping("/chat")
     public Flux<OllamaApi.ChatResponse> chat(@RequestParam(value = "topic", defaultValue = "linear equations") String topic,
-                                            @RequestParam(value = "usermessage", defaultValue = " ") String usermessage) {
+                                             @RequestParam(value = "usermessage", defaultValue = " ") String usermessage) {
         String filterExpressionChapter = "";
         String chapterContent = "";
         switch (topic) {
@@ -86,14 +95,22 @@ public class ChatController {
                 break;
         }
         try {
+            String systemPrompt = String.format(systemTemplateResource.getContentAsString(Charset.defaultCharset()), topic);
+            Message userMessage = new UserMessage(usermessage);
+            chatMemory.add(conversationId, userMessage);
+
+            List<Message> messages = chatMemory.get(conversationId, 50);
+            String chatHistory = messages.stream()
+                    .map(Message::getText)
+                    .collect(Collectors.joining(" "));
+
             List<Document> chapterResults = vectorStore.similaritySearch(
                     SearchRequest.builder()
-                            .query("Steps to find the solution. How to Solve. " + topic + " " + usermessage)
+                            .query("Steps to find the solution. How to Solve. " + topic + " " + chatHistory)
                             .topK(TOP_K)
                             .similarityThreshold(SIMILARITY_THRESHOLD)
                             .filterExpression(filterExpressionChapter)
                             .build());
-
 
             if (chapterResults != null && !chapterResults.isEmpty()) {
                 chapterContent = chapterResults.stream().map(Document::getText).collect(Collectors.joining("\n "));
@@ -101,20 +118,29 @@ public class ChatController {
                 chapterContent = "No documents provided \n";
             }
 
-            String systemPrompt = String.format(systemTemplateResource.getContentAsString(Charset.defaultCharset()), topic);
+            List<OllamaApi.Message> ollamaMessages = messages.stream().map(message -> {
+                OllamaApi.Message.Role role;
+                if (message instanceof UserMessage) {
+                    role = OllamaApi.Message.Role.USER;
+                } else if (message instanceof AssistantMessage) {
+                    role = OllamaApi.Message.Role.ASSISTANT;
+                } else {
+                    role = OllamaApi.Message.Role.SYSTEM;
+                }
+                return OllamaApi.Message.builder(role)
+                        .content(message.getText())
+                        .build();
+            }).collect(Collectors.toList());
+            ollamaMessages.add(0, OllamaApi.Message.builder(OllamaApi.Message.Role.SYSTEM)
+                    .content(systemPrompt)
+                    .build());
+            ollamaMessages.add(1,OllamaApi.Message.builder(OllamaApi.Message.Role.TOOL)
+                    .content(chapterContent)
+                    .build());
 
             OllamaApi.ChatRequest request = OllamaApi.ChatRequest.builder("phi4-mini")
                     .stream(true)
-                    .messages(List.of(
-                            OllamaApi.Message.builder(OllamaApi.Message.Role.SYSTEM)
-                                    .content(systemPrompt)
-                                    .build(),
-                            OllamaApi.Message.builder(OllamaApi.Message.Role.USER)
-                                    .content(usermessage)
-                                    .build(),
-                            OllamaApi.Message.builder(OllamaApi.Message.Role.TOOL)
-                                    .content(chapterContent)
-                                    .build()))
+                    .messages(ollamaMessages)
                     .options(OllamaOptions.builder()
                             .numCtx(8000)
                             .temperature(.25)
@@ -122,14 +148,16 @@ public class ChatController {
                             .build())
                     .build();
 
-            return this.ollamaApi.streamingChat(request);
+            return this.ollamaApi.streamingChat(request)
+                    .doOnNext(ollamaChatResponse -> {
+                        String responseContent = ollamaChatResponse.message().content();
+                        Message assistantMessage = new AssistantMessage(responseContent);
+                        chatMemory.add(conversationId, assistantMessage);
+                    });
 
         } catch (IOException e) {
-            // Handle the IOException from getContentAsString
             return Flux.error(new RuntimeException("Error reading system prompt template: " + e.getMessage(), e));
         } catch (Exception e) {
-            // Handle any other exceptions
             return Flux.error(new RuntimeException("Error processing chat request: " + e.getMessage(), e));
         }
-    }
-}
+    }}
