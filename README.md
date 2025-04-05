@@ -2,6 +2,17 @@ Abstract: Pre-algebra is a fundamental building block for numeracy skills, yet s
 
 The study focuses on leveraging Generative AI to develop a system that provides real-time feedback, delivers personal audio-based explanations, and breaks down equations step by step to aid students struggling with math comprehension. Additional features, such as Automatic Question Generation (AQG), help create tailored practice problems, in addition to text-to-speech functionality, further supporting students by making mathematical concepts more accessible. By incorporating these assistive technologies, this research aims to close learning gaps, enhance engagement, and build mathematical confidence among students with disabilities. 
 
+Scholarly resources: 
+
+Exploring generative AI in higher education: a RAG system to enhance student engagement with scientific literature https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2024.1474892/full
+
+Generative AI in education: Building AI solutions using course lecture content https://aws.amazon.com/blogs/publicsector/generative-ai-education-building-ai-solutions-using-course-lecture-content/
+
+Develop generative AI applications to improve teaching and learning experiences https://aws.amazon.com/blogs/machine-learning/develop-generative-ai-applications-to-improve-teaching-and-learning-experiences/
+
+How AI Can Help Identify and Support Learning Disabilities https://www.jetlearn.com/blog/how-ai-can-help-learning-disabilities
+
+AI in Education: Enhancing Accessibility and Inclusivity for Individuals with Disabilities https://www.fxmweb.com/insights/ai-in-education-enhancing-accessibility-and-inclusivity-for-individuals-with-disabilities.html
 
 This project uses the following resources:
 
