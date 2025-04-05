@@ -22,22 +22,22 @@ This project uses the following resources:
 
 Beginning and Intermediate Algebra by Tyler Wallace is licensed under a [Creative Commons Attribution 3.0 Unported License](https://creativecommons.org/licenses/by/3.0/). Based on a work at http://wallace.ccfaculty.org/book/book.html.
 
-Fundamentals of Mathematics by Denny Burzynski and Wade Ellis, which is licenced under a creative commons by attribution licence. For more information visit https://open.umn.edu/opentextbooks/textbooks/154 
+Fundamentals of Mathematics by Denny Burzynski and Wade Ellis, which is licensed under a creative commons by attribution license. For more information visit https://open.umn.edu/opentextbooks/textbooks/154 
 
 Spring AI and Spring Boot, frameworks licensed under the Apache License 2.0. For more information, visit https://spring.io/projects/spring-ai and https://spring.io/projects/spring-boot.
 
 Docker Compose, an open-source tool for defining and running multi-container Docker applications. Docker Compose is licensed under the Apache License 2.0. For more details, see https://docs.docker.com/compose/.
 
-Ollama, an open-source framework for deploying Large Language Models (LLMs) licenced under the MIT licence. For more information, visit https://ollama.com and https://github.com/ollama/ollama/.
+Ollama, an open-source framework for deploying Large Language Models (LLMs) licensed under the MIT license. For more information, visit https://ollama.com and https://github.com/ollama/ollama/.
 
-Phi-4 mini, an open-source large language model licensed under the MIT Licence. For more details, see https://ollama.com/library/phi4-mini/blobs/fa8235e5b48f.
+Phi-4 mini, an open-source large language model licensed under the MIT License. For more details, see https://ollama.com/library/phi4-mini/blobs/fa8235e5b48f.
 
 nomic-embed-text, an open-source embedding model licensed under the Apache License 2.0. For more information, visit https://ollama.com/library/nomic-embed-text
 
 pgvector, an open-source PostgreSQL extension for vector data. For more information, visit https://github.com/pgvector/pgvector.
 
-How to Run: Stuff you need to download for it: docker desktop app, the Intellij IDE, and the java sdk from https://www.azul.com/downloads (Thanks JC)
+How to Run: Dependencies: docker desktop app, the Intellij IDE, and the java 24 sdk from https://www.azul.com/downloads
 
-In order to use it, activate Intellij IDE, get it to decode with java, launch the docker desktop app, then open the folder on backend for it to run it, finally go to a browser and type http://localhost:8080/ It should work from their.
+In order to use it, open the Intellij IDE, launch the docker service by opening the docker desktop app, open the backend directory as the project, run it, and then finally go to a browser and type http://localhost:8080/ It should work from there.
 
 
