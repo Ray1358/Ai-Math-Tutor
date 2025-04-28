@@ -21,7 +21,7 @@ The study focuses on leveraging Generative AI to develop a system that provides 
 
 
 ## Documentation
-👉 [Click here to view the Java Documentation Website](https://ray1358.github.io/Ai-Math-Tutor/java_documentation/)
+👉 [Click here to view the Java Documentation Website](https://ray1358.github.io/Ai-Math-Tutor/)
 
 
 References:
