@@ -9,7 +9,7 @@ How to Run:
 
 3. Open the "backend" directory as a project in IntelliJ and wait for everything to load and index without clicking anything.
 
-4. Press the green arrow in IntelliJ to run the project.
+4. Press the green arrow in IntelliJ to run the project. This will take a while when running it for the first time because it needs to process the pdfs and pull the AI model. Wait until it says "Started MathTutorApplication" in the IntelliJ console before moving on to step 5.
 
 5. In your browser go to http://localhost:8080/ 
 
